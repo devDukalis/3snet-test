@@ -1,1 +1,1 @@
-# React + TypeScript + Tailwind CSS
+# Циклический сдвиг месяцев
