@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 
 import Loader from "../../components/Loader";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -18,22 +18,34 @@ import { MONTHS, YEARS } from "../../utils/const";
 export default function App() {
   const [monthStart, setMonthStart] = useState(getCurrentMonthIndex());
   const [year, setYear] = useState(getCurrentYear());
+
   const {
     data: tableData,
     loading,
     error,
   } = useFetch<ApiResponse>("/api.json");
 
+  const handlePrev = useCallback(
+    () => setMonthStart((prev) => (prev - 1 + 12) % 12),
+    []
+  );
+
+  const handleNext = useCallback(
+    () => setMonthStart((prev) => (prev + 1) % 12),
+    []
+  );
+
+  const handleAddPlan = useCallback(() => alert("На стадии реализации!"), []);
+
+  const visibleMonths = useMemo(
+    () => getVisibleMonths(monthStart),
+    [monthStart]
+  );
+
   if (loading) return <Loader />;
 
   if (error || !tableData)
     return <ErrorMessage message={error?.message || "Что-то пошло не так!"} />;
-
-  const visibleMonths = getVisibleMonths(monthStart);
-
-  const handlePrev = () => setMonthStart((prev) => (prev - 1 + 12) % 12);
-  const handleNext = () => setMonthStart((prev) => (prev + 1) % 12);
-  const handleAddPlan = () => alert("На стадии реализации!");
 
   return (
     <div className="min-h-screen py-2">
